@@ -1,0 +1,96 @@
+#include <stdio.h>
+#define MAX 10
+
+typedef struct {
+    int elem[MAX];
+    int count;
+} List, *ListPtr;
+
+void initialize(ListPtr L);
+void insertPos(ListPtr L, int position, int data);
+void deletePos(ListPtr L, int position);
+int locate(ListPtr L, int data);
+void insertSorted(ListPtr L, int data);
+void display(ListPtr L);
+
+int main() {
+    List L;
+    initialize(&L);
+
+    insertPos(&L, 0, 10);
+    insertPos(&L, 0, 20);
+    insertPos(&L, 0, 30);
+
+    display(&L);
+
+    return 0;
+}
+
+void initialize(ListPtr L) {
+    L->count = 0;
+}
+
+void insertPos(ListPtr L, int position, int data) {
+    if (L->count == MAX || position < 0 || position > L->count) {
+        printf("Invalid Position\n");
+        return;
+    }
+
+    for (int i = L->count; i > position; i--) {
+        L->elem[i] = L->elem[i - 1];
+    }
+
+    L->elem[position] = data;
+    L->count++;
+}
+
+void deletePos(ListPtr L, int position) {
+    if (position < 0 || position >= L->count) {
+        printf("Deletion FAILED: Invalid position.\n");
+        return;
+    }
+
+    for (int i = position; i < L->count - 1; i++) {
+        L->elem[i] = L->elem[i + 1];
+    }
+
+    L->count--;
+}
+
+int locate(ListPtr L, int data) {
+    for (int i = 0; i < L->count; i++) {
+        if (L->elem[i] == data) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void insertSorted(ListPtr L, int data) {
+    if (L->count == MAX) {
+        printf("Insertion failed: List full.\n");
+        return;
+    }
+
+    int i;
+    for (i = 0; i < L->count; i++) {
+        if (L->elem[i] > data) {
+            break;
+        }
+    }
+
+    insertPos(L, i, data);
+}
+
+void display(ListPtr L) {
+    if (L->count == 0) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    printf("List elements: ");
+    for (int i = 0; i < L->count; i++) {
+        printf("%d ", L->elem[i]);
+    }
+    printf("\n");
+}
