@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *elemPtr;
+    int count;
+    int size;
+} List;
+
+List initialize(int size) {
+    List L;
+    L.elemPtr = (char*)malloc(size * sizeof(char));
+    L.count = 0;
+    L.size = size;
+    return L;
+}
+
+List insertPos(List L, char data, int position) {
+    if (position < 0 || position > L.count || L.count == L.size) {
+        return L;
+    }
+    for (int i = L.count; i > position; i--) {
+        L.elemPtr[i] = L.elemPtr[i - 1];
+    }
+    L.elemPtr[position] = data;
+    L.count++;
+    return L;
+}
+
+List deletePos(List L, int position) {
+    if (position < 0 || position >= L.count) {
+        return L;
+    }
+    for (int i = position; i < L.count - 1; i++) {
+        L.elemPtr[i] = L.elemPtr[i + 1];
+    }
+    L.count--;
+    return L;
+}
+
+int locate(List L, int data) {
+    for (int i = 0; i < L.count; i++) {
+        if (L.elemPtr[i] == data) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+List insertSorted(List L, int data) {
+    if (L.count == L.size) {
+        return L;
+    }
+    int i = 0;
+    while (i < L.count && L.elemPtr[i] < data) {
+        i++;
+    }
+    return insertPos(L, data, i);
+}
+
+void display(List L) {
+    for (int i = 0; i < L.count; i++) {
+        printf("%c ", L.elemPtr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    List myList = initialize(10);
+    myList = insertPos(myList, 'b', 0);
+    myList = insertPos(myList, 'a', 0);
+    myList = insertSorted(myList, 'c');
+    display(myList);
+    int pos = locate(myList, 'b');
+    printf("%d\n", pos);
+    myList = deletePos(myList, 1);
+    display(myList);
+    free(myList.elemPtr);
+    return 0;
+}
