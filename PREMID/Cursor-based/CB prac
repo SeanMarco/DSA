@@ -1,1 +1,95 @@
+#include <stdio.h>
 
+#define MAX 4 
+
+typedef struct {
+    int elem;
+    int next;
+} Cell, HeapSpace[MAX];
+
+typedef struct {
+    HeapSpace H;
+    int avail;
+} Vheap;
+
+typedef int List;
+
+void initialize(Vheap *V) {
+    V->avail = 0;
+    for (int i = 0; i < MAX - 1; i++) {
+        V->H[i].next = i + 1;
+    }
+    V->H[MAX - 1].next = -1;
+}
+
+int alloc(Vheap *V) {
+    int ret = V->avail;
+    if (ret != -1) {
+        V->avail = V->H[ret].next;
+    }
+    return ret;
+}
+
+void deallocSpace(Vheap* V, int index) {
+    V->H[index].next = V->avail;
+    V->avail = index;
+}
+
+void insertFirst(int* L, Vheap* V, int elem) {
+    int newCell = alloc(V);
+    if (newCell != -1) {
+        V->H[newCell].elem = elem;
+        V->H[newCell].next = *L;
+        *L = newCell;
+    } else {
+        printf("No space available to insert %d!\n", elem);
+    }
+}
+
+void printList(List L, Vheap* V) {
+    int curr = L;
+    if (curr == -1) {
+        printf("List is empty.\n");
+        return;
+    }
+    while (curr != -1) {
+        printf("%d -> ", V->H[curr].elem);
+        curr = V->H[curr].next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Vheap vh;
+    List myList = -1;
+    int choice, elem;
+
+    initialize(&vh);
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Insert at front\n");
+        printf("2. Print list\n");
+        printf("3. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1:
+                printf("Enter element to insert: ");
+                scanf("%d", &elem);
+                insertFirst(&myList, &vh, elem);
+                break;
+            case 2:
+                printList(myList, &vh);
+                break;
+            case 3:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    } while (choice != 3);
+
+    return 0;
+}
