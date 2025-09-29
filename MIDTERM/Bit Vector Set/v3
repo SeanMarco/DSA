@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define ARRAY_SIZE 8
+typedef bool Set[ARRAY_SIZE];
+
+void initialize(Set set) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        set[i] = false;
+    }
+}
+
+void insert(Set set, int element) {
+    if (element < 0 || element >= ARRAY_SIZE) return;
+    set[element] = true;
+}
+
+void delete(Set set, int element) {
+    if (element < 0 || element >= ARRAY_SIZE) return;
+    set[element] = false;
+}
+
+bool find(Set set, int element) {
+    if (element < 0 || element >= ARRAY_SIZE) return false;
+    return set[element];
+}
+
+void union_set(Set A, Set B, Set C) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        C[i] = A[i] || B[i];
+    }
+}
+
+void intersection(Set A, Set B, Set C) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        C[i] = A[i] && B[i];
+    }
+}
+
+void difference(Set A, Set B, Set C) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        C[i] = A[i] && !B[i];
+    }
+}
+
+void display(Set set) {
+    printf("{");
+    int first = 1;
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        if (set[i]) {
+            if (!first) printf(", ");
+            printf("%d", i);
+            first = 0;
+        }
+    }
+    printf("}\n");
+}
+
+int main() {
+    Set A, B, C;
+
+    initialize(A);
+    insert(A, 0);
+    insert(A, 2);
+    insert(A, 7);
+    printf("A = "); display(A);
+
+    delete(A, 7);
+    printf("A after delete = "); display(A);
+
+    initialize(B);
+    insert(B, 2);
+    insert(B, 4);
+    insert(B, 5);
+    printf("B = "); display(B);
+
+    union_set(A, B, C);
+    printf("Union A,B = "); display(C);
+
+    intersection(A, B, C);
+    printf("Intersection A,B = "); display(C);
+
+    difference(A, B, C);
+    printf("Difference A-B = "); display(C);
+
+    printf("Find 2 in A: %s\n", find(A, 2) ? "Yes" : "No");
+    printf("Find 7 in A: %s\n", find(A, 7) ? "Yes" : "No");
+
+    return 0;
+}
