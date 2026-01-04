@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Binary Tree Node
+typedef struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+// Create a new node
+Node* createNode(int data) {
+    Node* newNode = (Node)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// ---------------- Queue for BFS ----------------
+#define MAX_QUEUE 100
+
+typedef struct Queue {
+    Node data[MAX_QUEUE];
+    int front;
+    int rear;
+} Queue;
+
+void initQueue(Queue* q) {
+    q->front = 0;
+    q->rear = -1;
+}
+
+int isEmpty(Queue* q) {
+    return q->front > q->rear;
+}
+
+void enqueue(Queue* q, Node* node) {
+    if (q->rear < MAX_QUEUE - 1) {
+        q->rear++;
+        q->data[q->rear] = node;
+    }
+}
+
+Node* dequeue(Queue* q) {
+    if (!isEmpty(q)) {
+        Node* node = q->data[q->front];
+        q->front++;
+        return node;
+    }
+    return NULL;
+}
+
+// ---------------- BFS Traversal ----------------
+void bfs(Node* root) {
+    if (root == NULL) return;
+
+    Queue q;
+    initQueue(&q);
+    enqueue(&q, root);
+
+    while (!isEmpty(&q)) {
+        Node* current = dequeue(&q);
+        printf("%d ", current->data);
+
+        if (current->left != NULL)
+            enqueue(&q, current->left);
+        if (current->right != NULL)
+            enqueue(&q, current->right);
+    }
+}
+
+// ---------------- Main ----------------
+int main() {
+    // Sample Binary Tree
+    Node* root = createNode(1);
+    root->left = createNode(2);
+    root->right = createNode(3);
+    root->left->left = createNode(4);
+    root->left->right = createNode(5);
+    root->right->left = createNode(6);
+    root->right->right = createNode(7);
+
+    printf("Level Order Traversal (BFS): ");
+    bfs(root);
+    printf("\n");
+
+    return 0;
+}
